@@ -3,9 +3,9 @@ export function getEle(el: string, context: HTMLElement) {
   return (context || document).querySelector(el)
 }
 
-export function $$(el: string, context: HTMLElement) {
+export function $$(el: string, context: HTMLElement = document.body) {
   if (!el) return []
-  return Array.from((context || document).querySelectorAll(el))
+  return Array.from((context).querySelectorAll(el))
 }
 
 export function uuid() {
