@@ -1,0 +1,8 @@
+---
+description: Specifies the technologies to be used for backend development, including Node.js, Express.js, MongoDB, and Mongoose.
+globs: 
+alwaysApply: false
+---
+- Use React
+- Use shadcnUI for components library
+- Use tailwindcss@v4 for css style

@@ -1,0 +1,24 @@
+import tailwindcss from '@tailwindcss/vite'
+import react from '@vitejs/plugin-react'
+import { defineConfig } from 'wxt'
+
+// See https://wxt.dev/api/config.html
+export default defineConfig({
+  outDir: "dist",
+  manifest: {
+    permissions: ['scripting', 'storage', 'sidePanel', 'tabs'],
+    name: 'extension template',
+    version: '0.0.1',
+    description: 'extension template',
+    host_permissions: ['<all_urls>'],
+    action: {
+      default_title: 'Click to open panel',
+    },
+  },
+  vite: () => ({
+    plugins: [
+      react(),
+      tailwindcss(),
+    ],
+  }),
+})
