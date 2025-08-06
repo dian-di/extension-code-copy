@@ -8,14 +8,15 @@ export default defineContentScript({
     const codeDom = await waitForElement<HTMLDivElement>(selector)
     if (!codeDom) return
     const codeEleList = $$(selector)
-    console.log(codeEleList, 444)
     // codeEleList.forEach(item => {
     //   (item as HTMLElement).style.border = '1px solid red';
     // })
 
     browser.runtime.sendMessage({
       type: 'SELECT-CODE-LIST',
-      data: codeEleList.map(item => (item as HTMLElement).innerHTML)
+      data: codeEleList.map(item => {
+        return `<pre>${(item as HTMLElement).outerHTML}</pre>`
+      })
     })
   },
 })
