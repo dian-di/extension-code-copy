@@ -9,7 +9,7 @@ export function $$(el: string, context: HTMLElement = document.body) {
 }
 
 export function scrollAndBlink(scrollTarget: HTMLElement, blinkTarget: HTMLElement) {
-  scrollTarget?.scrollIntoView({ behavior: 'smooth' })
+  scrollTarget?.scrollIntoView({ behavior: 'smooth', block: 'center', })
   blinkTarget?.classList.add('alerts-border')
   setTimeout(() => {
     blinkTarget?.classList.remove('alerts-border')

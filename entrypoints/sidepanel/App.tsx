@@ -1,46 +1,43 @@
 import { useEffect, useState } from "react"
 import hljs from "highlight.js"
 import "highlight.js/styles/github-dark.css"
-import { sendBrowserMessage } from "@/lib/extension-action"
+import { sendMessageToActiveTab } from "@/lib/extension-action"
 import { toast } from "@/lib/toast"
 import type { SourceCode } from '@/lib/types'
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { dark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import SyntaxHighlighter from 'react-syntax-highlighter';
+import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs'
+
+type ExtendedSourceCode = SourceCode & {
+  isExpanded: boolean
+}
 
 function SiderPanelApp() {
-  const [list, setList] = useState<SourceCode[]>([])
-  const [expandedIndexes, setExpandedIndexes] = useState<number[]>([])
+  const [list, setList] = useState<ExtendedSourceCode[]>([])
   
   useEffect(() => {
-    sendBrowserMessage({
+    sendMessageToActiveTab({
       greeting: 'get-code-list',
-    }).then(res => {
-      console.log('code-list', res)
-      setList(res.data as SourceCode[])
+    }).then((res) => {
+      const codeList = res.map((item: SourceCode) => {
+        return {
+          isExpanded: true,
+          ...item
+        }
+      })
+      setList(codeList)
     })
   }, [])
 
-  useEffect(() => {
-    const blocks = document.querySelectorAll("pre code")
-    blocks.forEach((block) => hljs.highlightElement(block as HTMLElement))
-  }, [list, expandedIndexes])
-
   const handleCopy = (index: number) => {
-    const container = document.getElementById(`code-content-${index}`)
-    if (container) {
-      const codeElement = container.querySelector("code")
-      if (codeElement) {
-        navigator.clipboard.writeText(codeElement.innerText).then(() => {
+        navigator.clipboard.writeText(list[index].code).then(() => {
           toast({
             text: 'Copied Successful. ✨',
           })
         })
-      }
-    }
   }
 
   const scrollToTarget = (id: string) => {
-    sendBrowserMessage({
+    sendMessageToActiveTab({
       greeting: 'scroll-to-element',
       data: {
         id
@@ -48,52 +45,51 @@ function SiderPanelApp() {
     })
   }
 
-  const toggleExpand = (index: number) => {
-    setExpandedIndexes((prev) =>
-      prev.includes(index)
-        ? prev.filter((i) => i !== index)
-        : [...prev, index]
-    )
-  }
+  const toggleExpand = (id: string) => {
+    setList(prevList => 
+      prevList.map(item => 
+        item.id === id ? {...item, isExpanded: !item.isExpanded} : item
+      )
+    );
+  };
+  
 
   return (
     <div>
-      <div className="mt-4 ml-2 text-lg">Source Code</div>
+      <div className="my-4 ml-2 text-lg">Source Code</div>
 
       {list.map((item, index) => {
-        const isExpanded = expandedIndexes.includes(index)
-
         return (
           <div
             key={item.id}
-            className="mb-6 rounded overflow-hidden"
+            className="px-2 mb-6"
           >
             <div className="flex justify-between bg-gray-100 px-2 py-1 text-sm items-center">
               <span className="font-medium text-gray-700">{item.language}</span>
 
               <div className="flex gap-2">
                 <button 
-                  className="text-blue-600 hover:underline"
+                  className="text-blue-600 hover:underline hover:cursor-default"
                   onClick={() => scrollToTarget(item.id)}
                   >
                     查看源码
                 </button>
-                {isExpanded && <button
-                  className="text-blue-600 hover:underline"
+                <button
+                  className="text-blue-600 hover:underline hover:cursor-copy"
                   onClick={() => handleCopy(index)}
                 >
                   复制
-                </button>}
+                </button>
                 <button
                   className="text-blue-600 hover:underline"
-                  onClick={() => toggleExpand(index)}
+                  onClick={() => toggleExpand(item.id)}
                 >
-                  {isExpanded ? "折叠" : "展开"}
+                  {item.isExpanded ? "折叠" : "展开"}
                 </button>
               </div>
             </div>
 
-            {isExpanded && <SyntaxHighlighter language="javascript" className="transition-all" startingLineNumber={true} style={dark}>
+            {item.isExpanded && <SyntaxHighlighter language={item.language} className="transition-all" showLineNumbers={true} style={docco}>
               {item.code}
             </SyntaxHighlighter>}
           </div>

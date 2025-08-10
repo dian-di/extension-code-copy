@@ -32,6 +32,15 @@ export function initEventHandler(contentReq: Partial<BrowserHandler>) {
   })
 }
 
+export function sendMessageToActiveTab(msg: BrowserRequest) {
+  return browser.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
+    if (tabs.length > 0) {
+      const tab = tabs[0]
+      return browser.tabs.sendMessage(tab.id as number, msg)
+    }
+  })
+}
+
 export function sendBrowserMessage(request: BrowserRequest) {
   return browser.runtime.sendMessage(request)
 }

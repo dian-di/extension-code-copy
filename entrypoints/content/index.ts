@@ -25,7 +25,8 @@ export default defineContentScript({
       'scroll-to-element': scrollToElement
     }
 
-    function getCodeList() {
+    function getCodeList(params: handlerParams) {
+      const { sendResponse } = params
       if (!marked) {
         codeEleList.forEach((item, index) => {
           const id = uuid()
@@ -34,16 +35,18 @@ export default defineContentScript({
         })
         marked = true
       }
-      return codeList
+      sendResponse(codeList)
     }
 
     function scrollToElement(params: handlerParams) {
       const {data} = params
       if (!data) return
       const id = data.id
-      const target = getEle(`[cc-id]=${id}`) as HTMLElement
+      const attr = `[cc-id="${id}"]`
+      const target = getEle(attr) as HTMLElement
       if (!target) return
-      scrollAndBlink(target, target)
+      const finalTarget = target.parentElement as HTMLElement
+      scrollAndBlink(finalTarget, finalTarget)
     }
 
     initEventHandler(contentReq)
@@ -51,9 +54,9 @@ export default defineContentScript({
 })
 
 function getLangFromCodeEle(el: HTMLElement) {
-  let lang = el.getAttribute('lang')
+  let lang = el.getAttribute('lang') || el.getAttribute('language')
   if (!lang) {
-    const match = el.className.match(/lang-(\S)/)
+    const match = el.className.match(/lang(?:[^-]+)?-(\S+)/)
     if (match) {
       lang = match[1]
     }
