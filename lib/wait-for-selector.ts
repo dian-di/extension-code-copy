@@ -12,7 +12,7 @@ export async function waitForElement<T extends Element>(
 ): Promise<T | null> {
   const {
     maxAttempts = 5,
-    interval = 300,
+    interval = 3000,
     parent = document,
     timeout = maxAttempts * interval + 500, // 额外增加 500ms 作为 buffer
     shouldStop = () => false,

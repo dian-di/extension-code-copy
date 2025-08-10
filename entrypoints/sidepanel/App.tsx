@@ -1,17 +1,22 @@
 import { useEffect, useState } from "react"
 import hljs from "highlight.js"
 import "highlight.js/styles/github-dark.css"
+import { sendBrowserMessage } from "@/lib/extension-action"
+import { toast } from "@/lib/toast"
+import type { SourceCode } from '@/lib/types'
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { dark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 function SiderPanelApp() {
-  const [list, setList] = useState<string[]>([])
+  const [list, setList] = useState<SourceCode[]>([])
   const [expandedIndexes, setExpandedIndexes] = useState<number[]>([])
-
+  
   useEffect(() => {
-    // 接收来自 content-script 的消息
-    browser.runtime.onMessage.addListener((message) => {
-      if (message.type === "SELECT-CODE-LIST") {
-        setList(message.data)
-      }
+    sendBrowserMessage({
+      greeting: 'get-code-list',
+    }).then(res => {
+      console.log('code-list', res)
+      setList(res.data as SourceCode[])
     })
   }, [])
 
@@ -26,10 +31,21 @@ function SiderPanelApp() {
       const codeElement = container.querySelector("code")
       if (codeElement) {
         navigator.clipboard.writeText(codeElement.innerText).then(() => {
-          alert("复制成功！")
+          toast({
+            text: 'Copied Successful. ✨',
+          })
         })
       }
     }
+  }
+
+  const scrollToTarget = (id: string) => {
+    sendBrowserMessage({
+      greeting: 'scroll-to-element',
+      data: {
+        id
+      }
+    })
   }
 
   const toggleExpand = (index: number) => {
@@ -40,34 +56,25 @@ function SiderPanelApp() {
     )
   }
 
-  const extractLanguage = (htmlString: string): string => {
-    const match = htmlString.match(/class=["'][^"']*language-([\w\d-]+)/)
-    if (match && match[1]) {
-      const lang = match[1]
-      return lang
-    }
-    return "Unknown"
-  }
-
   return (
     <div>
-      <div className="mt-4 ml-2 text-lg">SiderPanel</div>
+      <div className="mt-4 ml-2 text-lg">Source Code</div>
 
       {list.map((item, index) => {
         const isExpanded = expandedIndexes.includes(index)
-        const lang = extractLanguage(item)
 
         return (
           <div
-            key={index}
+            key={item.id}
             className="mb-6 rounded overflow-hidden"
           >
             <div className="flex justify-between bg-gray-100 px-2 py-1 text-sm items-center">
-              <span className="font-medium text-gray-700">{lang}</span>
+              <span className="font-medium text-gray-700">{item.language}</span>
 
               <div className="flex gap-2">
                 <button 
-                  className="text-blue-600 hover:underline" 
+                  className="text-blue-600 hover:underline"
+                  onClick={() => scrollToTarget(item.id)}
                   >
                     查看源码
                 </button>
@@ -86,11 +93,9 @@ function SiderPanelApp() {
               </div>
             </div>
 
-            {isExpanded && <div
-              id={`code-content-${index}`}
-              className="transition-all"
-              dangerouslySetInnerHTML={{ __html: item }}
-            />}
+            {isExpanded && <SyntaxHighlighter language="javascript" className="transition-all" startingLineNumber={true} style={dark}>
+              {item.code}
+            </SyntaxHighlighter>}
           </div>
         )
       })}

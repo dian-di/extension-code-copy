@@ -1,6 +1,6 @@
 import { browser } from 'wxt/browser'
 
-type GreetingType = 'get-active-tab'
+type GreetingType = 'get-active-tab' | 'get-code-list' | 'scroll-to-element'
 
 export type BrowserRequest = {
   greeting: GreetingType
