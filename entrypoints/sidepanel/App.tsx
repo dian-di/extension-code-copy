@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react"
 import { sendMessageToActiveTab } from "@/lib/extension-action"
-import { toast } from "@/lib/toast"
+import { toast, ToastType } from "@/lib/toast"
 import type { SourceCode } from '@/lib/types'
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { a11yDark } from 'react-syntax-highlighter/dist/esm/styles/hljs'
@@ -61,6 +61,7 @@ function SiderPanelApp() {
     if (!checkedList.length) {
       toast({
         text: 'You have to select at least one item.',
+        type: ToastType.Warning
       })
       return
     }
