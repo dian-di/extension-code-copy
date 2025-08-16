@@ -7,7 +7,9 @@ import '@/assets/index.css'
 export default defineContentScript({
   matches: ['<all_urls>'],
   async main() {
-    const selector = 'pre>code'
+    // https://blog.ml.cmu.edu/2025/06/01/rlhf-101-a-technical-tutorial-on-reinforcement-learning-from-human-feedback/
+    // https://www.hackingwithswift.com/quick-start/beginners/how-to-create-and-use-closures
+    const selector = 'pre'
     const codeDom = await waitForElement<HTMLDivElement>(selector)
     if (!codeDom) return
     const codeEleList = $$(selector)
@@ -45,7 +47,10 @@ export default defineContentScript({
       const attr = `[cc-id="${id}"]`
       const target = getEle(attr) as HTMLElement
       if (!target) return
-      const finalTarget = target.parentElement as HTMLElement
+      let finalTarget = target.closest('pre') as HTMLElement
+      if (finalTarget.classList.contains('enlighter-origin')) {
+        finalTarget = finalTarget.previousElementSibling as HTMLElement
+      }
       scrollAndBlink(finalTarget, finalTarget)
     }
 
@@ -54,7 +59,8 @@ export default defineContentScript({
 })
 
 function getLangFromCodeEle(el: HTMLElement) {
-  let lang = el.getAttribute('lang') || el.getAttribute('language')
+  let lang = el.getAttribute('lang') || el.getAttribute('language') || el.getAttribute('data-enlighter-language')
+  console.log(lang, 'lang')
   if (!lang) {
     const match = el.className.match(/lang(?:[^-]+)?-(\S+)/)
     if (match) {
