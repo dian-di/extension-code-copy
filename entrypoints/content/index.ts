@@ -39,9 +39,9 @@ export default defineContentScript({
     }
 
     function scrollToElement(params: handlerParams) {
-      const {data} = params
-      if (!data) return
-      const id = data.id
+      const { data } = params
+      if (!data || typeof data !== 'object' || !('id' in data)) return
+      const id = (data as { id: string }).id
       const attr = `[cc-id="${id}"]`
       const target = getEle(attr) as HTMLElement
       if (!target) return
