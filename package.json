@@ -1,6 +1,6 @@
 {
-  "name": "extension-template",
-  "description": "manifest.json description",
+  "name": "CodeCopy",
+  "description": "Easy Code Copy",
   "private": true,
   "version": "0.0.1",
   "type": "module",

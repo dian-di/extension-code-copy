@@ -6,10 +6,10 @@ import { defineConfig } from 'wxt'
 export default defineConfig({
   outDir: "dist",
   manifest: {
-    permissions: ['scripting', 'storage', 'sidePanel', 'tabs'],
-    name: 'extension template',
+    permissions: ['storage', 'sidePanel', 'tabs'],
+    name: 'CodeCopy',
     version: '0.0.1',
-    description: 'extension template',
+    description: 'Easy Code Copy',
     host_permissions: ['<all_urls>'],
     action: {
       default_title: 'Click to open panel',
