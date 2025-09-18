@@ -104,17 +104,16 @@ function SiderPanelApp() {
 
   return (
     <div>
-      <div className="flex flex-row justify-between gap-4 p-4 sticky top-0 z-50 bg-white">
-        <div className="flex flex-row items-center flex-1">
-        <Checkbox checked={isAllChecked}
-        onCheckedChange={toggleAllCheck} />
+      <div className="flex gap-2 p-2 sticky top-0 z-50 bg-white">
+        <div className="flex items-center">
+          <Checkbox checked={isAllChecked} onCheckedChange={toggleAllCheck} />
           <button 
-            className="text-xl text-blue-600 cursor-pointer pl-4"
+            className="text-sm text-green-400 cursor-pointer w-38"
             onClick={copySelected}>
               Copy Selected Code
           </button>
-      </div>
-        <div>
+        </div>
+        <div className="w-[100px]">
           <LanguageSelector setLanguage={setListLanguage} language={language} />
         </div>
       </div>
@@ -131,28 +130,28 @@ function SiderPanelApp() {
                 onCheckedChange={() => toggleCheck(item.id)} />
               <label
                 htmlFor={item.id}
-                className="text-xl font-bold pl-2 w-full"
+                className="text-base font-bold pl-2 w-full"
               >{index + 1}</label>
               </div>
 
               <div className="flex gap-2">
                 <button 
-                  className="text-blue-600 hover:underline hover:cursor-default"
+                  className="text-blue-400 hover:underline hover:cursor-default"
                   onClick={() => scrollToTarget(item.id)}
                   >
                     Inspect
                 </button>
                 <button
-                  className="text-blue-600 cursor-pointer"
+                  className="text-green-400 cursor-pointer"
                   onClick={() => handleCopy(index)}
                 >
                   Copy
                 </button>
                 <button
-                  className="text-blue-600 cursor-pointer"
+                  className="text-gray-400 cursor-pointer"
                   onClick={() => toggleExpand(item.id)}
                 >
-                <ChevronUp className={cn('transition-transform', item.isExpanded ? '': 'rotate-180')} />
+                  <ChevronUp className={cn('transition-transform', item.isExpanded ? '': 'rotate-180')} />
                 </button>
               </div>
             </div>

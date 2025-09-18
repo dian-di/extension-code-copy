@@ -94,7 +94,8 @@ export default function LanguageSelector({ setLanguage, language }: Props) {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[200px] justify-between"
+          className="w-[150px] justify-between"
+          size={'sm'}
         >
           {language
             ? langList.find((item) => item.value === language)?.label
