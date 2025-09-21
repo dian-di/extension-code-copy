@@ -6,8 +6,8 @@ import { defineConfig } from 'wxt'
 export default defineConfig({
   outDir: "dist",
   manifest: {
-    permissions: ['scripting','storage', 'sidePanel', 'tabs'],
-    name: 'CodeCopy',
+    permissions: ['storage', 'sidePanel', 'tabs'],
+    name: 'Code Copy',
     version: '0.0.1',
     description: 'Easy Code Copy',
     host_permissions: ['<all_urls>'],

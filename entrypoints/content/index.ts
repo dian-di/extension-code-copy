@@ -2,7 +2,7 @@ import { getEle, $$, uuid, scrollAndBlink } from "@/lib";
 import { handlerParams, initEventHandler  } from "@/lib/extension-action";
 import { waitForElement } from "@/lib/wait-for-selector";
 import type { SourceCode } from '@/lib/types'
-import '@/assets/index.css'
+import './content.css'
 
 export default defineContentScript({
   matches: ['<all_urls>'],

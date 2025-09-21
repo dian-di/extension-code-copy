@@ -4,7 +4,7 @@ import { toast, ToastType } from "@/lib/toast"
 import type { SourceCode } from '@/lib/types'
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { a11yDark } from 'react-syntax-highlighter/dist/esm/styles/hljs'
-import { ChevronUp } from "lucide-react"
+import { ChevronUp, Copy, SquareDashedMousePointer } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"
 import { cn } from "@/lib/utils";
 import LanguageSelector from './components/languageSelector';
@@ -13,6 +13,21 @@ import { getLanguage as getLanguageStorage, setLanguage as setLanguageStorage } 
 type ExtendedSourceCode = SourceCode & {
   isExpanded: boolean
   isChecked: boolean
+}
+
+function getCodeList(cb: (codeList: ExtendedSourceCode[]) => void) {
+  sendMessageToActiveTab({
+    greeting: 'get-code-list',
+  }).then((res) => {
+    const codeList = res.map((item: SourceCode) => {
+      return {
+        isExpanded: true,
+        isChecked: false,
+        ...item
+      }
+    })
+    cb(codeList)
+  })
 }
 
 function SiderPanelApp() {
@@ -25,18 +40,7 @@ function SiderPanelApp() {
         setLanguage(lang)
       }
     })
-    sendMessageToActiveTab({
-      greeting: 'get-code-list',
-    }).then((res) => {
-      const codeList = res.map((item: SourceCode) => {
-        return {
-          isExpanded: true,
-          isChecked: false,
-          ...item
-        }
-      })
-      setList(codeList)
-    })
+    getCodeList(setList)
   }, [])
 
   const handleCopy = (index: number) => {
@@ -104,7 +108,7 @@ function SiderPanelApp() {
 
   return (
     <div>
-      <div className="flex gap-2 p-2 sticky top-0 z-50 bg-white">
+      <div className="flex justify-between gap-2 p-2 sticky top-0 z-50 bg-white">
         <div className="flex items-center">
           <Checkbox checked={isAllChecked} onCheckedChange={toggleAllCheck} />
           <button 
@@ -113,8 +117,11 @@ function SiderPanelApp() {
               Copy Selected Code
           </button>
         </div>
-        <div className="w-[100px]">
-          <LanguageSelector setLanguage={setListLanguage} language={language} />
+        <div className="flex items-center gap-2">
+          <div className="font-semibold">Display Language</div>
+          <div>
+            <LanguageSelector setLanguage={setListLanguage} language={language} />
+          </div>
         </div>
       </div>
       
@@ -122,10 +129,10 @@ function SiderPanelApp() {
         return (
           <div
             key={`${item.id}_${item.language}`}
-            className="px-2 mb-6"
+            className="mb-6 rounded-2xl"
           >
             <div className="flex justify-between bg-gray-100 px-2 py-1 text-sm items-center">
-              <div className="flex items-center w-full">
+              <div className="flex items-center w-full py-1">
               <Checkbox className="bg-white" id={item.id} checked={item.isChecked}
                 onCheckedChange={() => toggleCheck(item.id)} />
               <label
@@ -135,24 +142,11 @@ function SiderPanelApp() {
               </div>
 
               <div className="flex gap-2">
-                <button 
-                  className="text-blue-400 hover:underline hover:cursor-default"
-                  onClick={() => scrollToTarget(item.id)}
-                  >
-                    Inspect
-                </button>
-                <button
-                  className="text-green-400 cursor-pointer"
-                  onClick={() => handleCopy(index)}
-                >
-                  Copy
-                </button>
-                <button
-                  className="text-gray-400 cursor-pointer"
-                  onClick={() => toggleExpand(item.id)}
-                >
-                  <ChevronUp className={cn('transition-transform', item.isExpanded ? '': 'rotate-180')} />
-                </button>
+                <SquareDashedMousePointer className="text-blue-400 cursor-pointer"
+                  onClick={() => scrollToTarget(item.id)}/>
+                <Copy className="text-green-400 cursor-pointer"
+                  onClick={() => handleCopy(index)} />
+                  <ChevronUp onClick={() => toggleExpand(item.id)} className={cn('transition-transform', item.isExpanded ? '': 'rotate-180', 'text-gray-400 cursor-pointer')} />
               </div>
             </div>
 
