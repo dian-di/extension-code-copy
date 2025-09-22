@@ -2,10 +2,11 @@ import { useEffect, useMemo, useState } from "react"
 import { sendMessageToActiveTab } from "@/lib/extension-action"
 import { toast, ToastType } from "@/lib/toast"
 import type { SourceCode } from '@/lib/types'
-import SyntaxHighlighter from 'react-syntax-highlighter';
+import SyntaxHighlighter from 'react-syntax-highlighter'
 import { a11yDark } from 'react-syntax-highlighter/dist/esm/styles/hljs'
 import { ChevronUp, Copy, SquareDashedMousePointer } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"
+import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils";
 import LanguageSelector from './components/languageSelector';
 import { getLanguage as getLanguageStorage, setLanguage as setLanguageStorage } from "@/lib/storage";
@@ -93,7 +94,7 @@ function SiderPanelApp() {
   }
 
   const isAllChecked = useMemo(() => {
-    return list.every(item => item.isChecked)
+    return list.length !== 0 && list.every(item => item.isChecked)
   }, [list])
 
   const toggleAllCheck = () => {
@@ -107,29 +108,24 @@ function SiderPanelApp() {
   }
 
   return (
-    <div>
-      <div className="flex justify-between gap-2 p-2 sticky top-0 z-50 bg-white">
-        <div className="flex items-center">
+    <div className="px-2">
+      <div className="flex justify-between gap-2 py-4 px-2 sticky top-0 z-50 bg-white">
+        <div className="flex items-center gap-2">
           <Checkbox checked={isAllChecked} onCheckedChange={toggleAllCheck} />
-          <button 
-            className="text-sm text-green-400 cursor-pointer w-38"
+          <Button 
+            className="text-base font-semibold cursor-pointer"
             onClick={copySelected}>
               Copy Selected Code
-          </button>
+          </Button>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="font-semibold">Display Language</div>
-          <div>
-            <LanguageSelector setLanguage={setListLanguage} language={language} />
-          </div>
-        </div>
+        <LanguageSelector setLanguage={setListLanguage} language={language} />
       </div>
       
       {list.map((item, index) => {
         return (
           <div
             key={`${item.id}_${item.language}`}
-            className="mb-6 rounded-2xl"
+            className="mb-6 rounded-md overflow-hidden"
           >
             <div className="flex justify-between bg-gray-100 px-2 py-1 text-sm items-center">
               <div className="flex items-center w-full py-1">
@@ -142,11 +138,11 @@ function SiderPanelApp() {
               </div>
 
               <div className="flex gap-2">
-                <SquareDashedMousePointer className="text-blue-400 cursor-pointer"
+                <SquareDashedMousePointer className="text-gray-500 hover:text-black cursor-pointer"
                   onClick={() => scrollToTarget(item.id)}/>
-                <Copy className="text-green-400 cursor-pointer"
+                <Copy className="text-gray-500 hover:text-black cursor-pointer"
                   onClick={() => handleCopy(index)} />
-                  <ChevronUp onClick={() => toggleExpand(item.id)} className={cn('transition-transform', item.isExpanded ? '': 'rotate-180', 'text-gray-400 cursor-pointer')} />
+                  <ChevronUp onClick={() => toggleExpand(item.id)} className={cn('transition-transform', item.isExpanded ? '': 'rotate-180', 'text-gray-500 hover:text-black  cursor-pointer')} />
               </div>
             </div>
 
