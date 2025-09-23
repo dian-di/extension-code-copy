@@ -9,7 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils";
 import LanguageSelector from './components/languageSelector';
-import { getLanguage as getLanguageStorage, setLanguage as setLanguageStorage } from "@/lib/storage";
+import { langMap } from './components/languageSelector'
 
 type ExtendedSourceCode = SourceCode & {
   isExpanded: boolean
@@ -36,11 +36,6 @@ function SiderPanelApp() {
   const [language, setLanguage] = useState<string>('')
 
   useEffect(() => {
-    getLanguageStorage().then(lang => {
-      if (lang) {
-        setLanguage(lang)
-      }
-    })
     getCodeList(setList)
   }, [])
 
@@ -103,7 +98,6 @@ function SiderPanelApp() {
 
   const setListLanguage = (language: string) => {
     setLanguage(language)
-    setLanguageStorage(language)
     setList(prevList => prevList.map(item => ({...item, language})))
   }
 
@@ -127,22 +121,22 @@ function SiderPanelApp() {
             key={`${item.id}_${item.language}`}
             className="mb-6 rounded-md overflow-hidden"
           >
-            <div className="flex justify-between bg-gray-100 px-2 py-1 text-sm items-center">
+            <div className="flex justify-between bg-gray-100 px-2 py-1 text-sm items-center text-gray-500">
               <div className="flex items-center w-full py-1">
               <Checkbox className="bg-white" id={item.id} checked={item.isChecked}
                 onCheckedChange={() => toggleCheck(item.id)} />
               <label
                 htmlFor={item.id}
                 className="text-base font-bold pl-2 w-full"
-              >{index + 1}</label>
+              >{index + 1}<span className="ml-4 ">{langMap[item.language] || item.language || 'Unknown Language'}</span></label>
               </div>
 
               <div className="flex gap-2">
-                <SquareDashedMousePointer className="text-gray-500 hover:text-black cursor-pointer"
+                <SquareDashedMousePointer className="hover:text-black cursor-pointer"
                   onClick={() => scrollToTarget(item.id)}/>
-                <Copy className="text-gray-500 hover:text-black cursor-pointer"
+                <Copy className="hover:text-black cursor-pointer"
                   onClick={() => handleCopy(index)} />
-                  <ChevronUp onClick={() => toggleExpand(item.id)} className={cn('transition-transform', item.isExpanded ? '': 'rotate-180', 'text-gray-500 hover:text-black  cursor-pointer')} />
+                  <ChevronUp onClick={() => toggleExpand(item.id)} className={cn('transition-transform', item.isExpanded ? '': 'rotate-180', 'hover:text-black  cursor-pointer')} />
               </div>
             </div>
 

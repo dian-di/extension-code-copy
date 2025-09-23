@@ -8,11 +8,11 @@ export function $$(el: string, context: HTMLElement = document.body) {
   return Array.from((context).querySelectorAll(el)) as HTMLElement[]
 }
 
-export function scrollAndBlink(scrollTarget: HTMLElement, blinkTarget: HTMLElement) {
+export function scrollAndBlink(scrollTarget: HTMLElement) {
   scrollTarget?.scrollIntoView({ behavior: 'smooth', block: 'center', })
-  blinkTarget?.classList.add('alerts-border')
+  scrollTarget?.classList.add('alerts-border')
   setTimeout(() => {
-    blinkTarget?.classList.remove('alerts-border')
+    scrollTarget?.classList.remove('alerts-border')
   }, 3000)
 }
 

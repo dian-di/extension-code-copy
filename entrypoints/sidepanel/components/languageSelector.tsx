@@ -9,7 +9,6 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
   Command,
-  CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
@@ -28,68 +27,68 @@ type Item = {
 
 const langList: Item[] = [
   // top 50 of tiobe-index
-  {label: "Python", value: "python"},
-  {label: "C++", value: "cpp"},
-  {label: "C", value: "c"},
-  {label: "Java", value: "java"},
-  {label: "C#", value: "csharp"},
-  {label: "JavaScript", value: "javascript"},
-  {label: "Visual Basic", value: "vbnet"},
-  {label: "Go", value: "go"},
-  {label: "Perl", value: "perl"},
-  {label: "Delphi/Pascal", value: "delphi"},
-  {label: "Fortran", value: "fortran"},
-  {label: "SQL", value: "sql"},
-  {label: "Ada", value: "ada"},
-  {label: "R", value: "r"},
-  {label: "PHP", value: "php"},
-  {label: "MATLAB", value: "matlab"},
-  {label: "Scratch", value: "scratch"},
-  {label: "Rust", value: "rust"},
-  {label: "Kotlin", value: "kotlin"},
-  {label: "Assembly language", value: "x86asm"}, // x86asm
-    {label: "Lisp", value: "lisp"},
-    // {label: "COBOL", name: // "cobol"},
-    // {label: "Classic Visual Basic", name: // "classic visual basic"},
-    {label: "Prolog", value: "prolog"},
-    {label: "Swift", value: "swift"},
-    {label: "Ruby", value: "ruby"},
-    {label: "SAS", value: "sas"},
-    {label: "Dart", value: "dart"},
-    {label: "Objective-C", value: "objective-c"},
-    {label: "Julia", value: "julia"},
-    {label: "Lua", value: "lua"},
-    {label: "Haskell", value: "haskell"},
-    {label: "Scala", value: "scala"},
-    // {label: "(Visual) FoxPro", value: // "(visual) foxpro"},
-    {label: "TypeScript", value: "typescript"},
-    {label: "GAMS", value: "gams"},
-    {label: "VBScript", value: "vbscript"},
-    // {label: "PL/SQL", value: "sql"},
-    {label: "ABAP", value: "abap"},
-    // {label: "X++", value: // "x++"},
-    {label: "Elixir", value: "elixir"},
-    {label: "Solidity", value: "solidity"},
-    {label: "ML", value: "ml"},
-    {label: "Erlang", value: "erlang"},
-    {label: "PowerShell", value: "powershell"},
-    // {label: "Ladder Logic", value: // "ladder logic"},
-    {label: "Bash", value: "bash"},
-    // {label: "V", value: // "v"},
-    {label: "Awk", value: "awk"},
-    {label: "LabVIEW", value: "labview"},
-    // extended
-    {label: "Vim", value: 'vim'},
-    {label: "XML", value: 'xml'},
-    {label: "protobuf", value: 'protobuf'},
-    {label: "HTML", value: 'htmlbars'},
+  { label: "Python", value: "python" },
+  { label: "C++", value: "cpp" },
+  { label: "C", value: "c" },
+  { label: "Java", value: "java" },
+  { label: "C#", value: "csharp" },
+  { label: "JavaScript", value: "javascript" },
+  { label: "Visual Basic", value: "vbnet" },
+  { label: "Go", value: "go" },
+  { label: "Perl", value: "perl" },
+  { label: "Delphi/Pascal", value: "delphi" },
+  { label: "Fortran", value: "fortran" },
+  { label: "SQL", value: "sql" },
+  { label: "Ada", value: "ada" },
+  { label: "R", value: "r" },
+  { label: "PHP", value: "php" },
+  { label: "MATLAB", value: "matlab" },
+  { label: "Scratch", value: "scratch" },
+  { label: "Rust", value: "rust" },
+  { label: "Kotlin", value: "kotlin" },
+  { label: "Assembly language", value: "x86asm" }, // x86asm
+  { label: "Lisp", value: "lisp" },
+  // {label: "COBOL", name: // "cobol"},
+  // {label: "Classic Visual Basic", name: // "classic visual basic"},
+  { label: "Prolog", value: "prolog" },
+  { label: "Swift", value: "swift" },
+  { label: "Ruby", value: "ruby" },
+  { label: "SAS", value: "sas" },
+  { label: "Dart", value: "dart" },
+  { label: "Objective-C", value: "objective-c" },
+  { label: "Julia", value: "julia" },
+  { label: "Lua", value: "lua" },
+  { label: "Haskell", value: "haskell" },
+  { label: "Scala", value: "scala" },
+  // {label: "(Visual) FoxPro", value: // "(visual) foxpro"},
+  { label: "TypeScript", value: "typescript" },
+  { label: "GAMS", value: "gams" },
+  { label: "VBScript", value: "vbscript" },
+  // {label: "PL/SQL", value: "sql"},
+  { label: "ABAP", value: "abap" },
+  // {label: "X++", value: // "x++"},
+  { label: "Elixir", value: "elixir" },
+  { label: "Solidity", value: "solidity" },
+  { label: "ML", value: "ml" },
+  { label: "Erlang", value: "erlang" },
+  { label: "PowerShell", value: "powershell" },
+  // {label: "Ladder Logic", value: // "ladder logic"},
+  { label: "Bash", value: "bash" },
+  // {label: "V", value: // "v"},
+  { label: "Awk", value: "awk" },
+  { label: "LabVIEW", value: "labview" },
+  // extended
+  { label: "Vim", value: 'vim' },
+  { label: "XML", value: 'xml' },
+  { label: "protobuf", value: 'protobuf' },
+  { label: "HTML", value: 'htmlbars' },
 ]
 
 type LanguageMap = {
   [K in typeof langList[number]['value']]: typeof langList[number]['label']
 }
 
-const langMap: LanguageMap = langList.reduce((acc, curr) => {
+export const langMap: LanguageMap = langList.reduce((acc, curr) => {
   return {
     ...acc,
     [curr.value]: curr.label
@@ -113,8 +112,9 @@ export default function LanguageSelector({ setLanguage, language }: Props) {
 
   return (
     <div className="flex justify-start gap-2">
-      <div className="font-semibold mt-[6px]">Syntax Highlight Language</div>
+      <div className="font-semibold mt-[8px]">Syntax Highlight Language</div>
       <div className="flex flex-col items-start gap-2">
+        <div className='flex items-center gap-1'>
           <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
               <Button
@@ -161,11 +161,13 @@ export default function LanguageSelector({ setLanguage, language }: Props) {
               </Command>
             </PopoverContent>
           </Popover>
-      <div className='flex items-center gap-1 mt-2'>
-        {history?.map(item => (
-          <div onClick={() => setLanguage(item)} className="py-1 px-2 bg-gray-600 rounded-full cursor-pointer text-white">{langMap[item]}</div>
-        ))}
-      </div>
+          <Button className='text-red-500' onClick={() => setLanguage('')} variant="link">Clear</Button>
+        </div>
+        <div className='flex items-center gap-1 mt-2'>
+          {history?.map(item => (
+            <div onClick={() => setLanguage(item)} className="py-1 px-2 bg-gray-600 rounded-full cursor-pointer text-white">{langMap[item]}</div>
+          ))}
+        </div>
       </div>
     </div>
   )
