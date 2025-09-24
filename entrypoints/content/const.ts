@@ -67,13 +67,7 @@ export const rules: Record<string, Rule> = {
     langParse: (el: HTMLElement) => el.querySelector('span')?.className.replace('color', '')
   },
   // https://leetcode.com/problems/string-to-integer-atoi/solutions/6924378/video-o-n-time-and-o-1-space/
-  'leetcode.com': {
-    selectorList,
-    codeParse,
-    langParse: (el: HTMLElement) => {
-      return getLangFromClass(el.querySelector('code'), /language-(\S+)/)
-    },
-  }
+
 }
 
 function getLangFromClass(el: HTMLElement | null, regex: RegExp) {
@@ -88,12 +82,17 @@ function codeParse(el: HTMLElement) {
   return el.innerText
 }
 
-function langParse(el: HTMLElement) {
+function langParse(el: HTMLElement): string | null {
   let lang = el.getAttribute('lang') || el.getAttribute('language') || el.getAttribute('data-enlighter-language')
   if (!lang) {
     const match = el.className.match(/lang(?:[^-]+)?-(\S+)/)
     if (match) {
       lang = match[1]
+    } else if (el.tagName === 'PRE') {
+      const codeEle = el.querySelector('code')
+      if (codeEle) {
+        lang = langParse(codeEle)
+      }
     }
   }
   return lang
