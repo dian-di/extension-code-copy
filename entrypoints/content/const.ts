@@ -83,7 +83,7 @@ function codeParse(el: HTMLElement) {
 }
 
 function langParse(el: HTMLElement): string | null {
-  let lang = el.getAttribute('lang') || el.getAttribute('language') || el.getAttribute('data-enlighter-language')
+  let lang = el.getAttribute('lang') || el.getAttribute('language') || el.getAttribute('data-lang') || el.getAttribute('data-language') || el.getAttribute('data-enlighter-language')
   if (!lang) {
     const match = el.className.match(/lang(?:[^-]+)?-(\S+)/)
     if (match) {
