@@ -60,14 +60,29 @@ export const rules: Record<string, Rule> = {
       return getLangFromClass(el.parentElement, /highlight-source-(\S+)/)
     }
   },
+  'runoob.com': {
+    selectorList: [...selectorList, '.example_code'],
+    codeParse,
+    langParse: (el: HTMLElement) => {
+      const pre = el.previousElementSibling
+      // 实例（Python）
+      // 实例（C++）
+      if (!pre) return
+      return pre.textContent.match(/（(\S+)）/)?.[1].toLowerCase()
+    }
+  },
   // https://www.w3schools.com/python/python_numbers.asp
   'w3schools.com': {
     selectorList: [...selectorList, '.w3-code'],
     codeParse,
     langParse: (el: HTMLElement) => el.querySelector('span')?.className.replace('color', '')
   },
+  'opencv.org': {
+    selectorList: [...selectorList, '.fragment'],
+    codeParse,
+    langParse: (el: HTMLElement) => getLangFromClass(el.parentElement, /label-(\S+)/)
+  }
   // https://leetcode.com/problems/string-to-integer-atoi/solutions/6924378/video-o-n-time-and-o-1-space/
-
 }
 
 function getLangFromClass(el: HTMLElement | null, regex: RegExp) {
