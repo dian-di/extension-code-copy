@@ -4,12 +4,13 @@ import { toast, ToastType } from "@/lib/toast"
 import type { SourceCode } from '@/lib/types'
 import SyntaxHighlighter from 'react-syntax-highlighter'
 import { a11yDark } from 'react-syntax-highlighter/dist/esm/styles/hljs'
-import { ChevronUp, Copy, SquareDashedMousePointer, RefreshCcw } from "lucide-react"
+import { ChevronUp, Copy, SquareDashedMousePointer, RefreshCcw, Settings } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils";
 import LanguageSelector from './components/languageSelector';
 import { langMap } from './components/languageSelector'
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 
 type ExtendedSourceCode = SourceCode & {
   isExpanded: boolean
@@ -108,16 +109,26 @@ function SiderPanelApp() {
   return (
     <div className="px-2">
       <div className="flex justify-between gap-2 py-4 px-2 sticky top-0 z-50 bg-white">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 ">
           <Checkbox checked={isAllChecked} onCheckedChange={toggleAllCheck} />
           <Button
-            className="text-base font-semibold cursor-pointer"
+            className="text-base font-semibold cursor-pointer rounded-full shadow"
             onClick={copySelected}>
-              Copy Selected Code
+              Copy Selected
           </Button>
         </div>
-        <RefreshCcw onClick={toSetList}/>
-        <LanguageSelector setLanguage={setListLanguage} language={language} />
+       <div className="flex gap-4 items-center">
+        <RefreshCcw size={30} onClick={toSetList} className="cursor-pointer"/>
+       
+        <Popover>
+          <PopoverTrigger asChild>
+            <Settings size={30} className="cursor-pointer" />
+          </PopoverTrigger>
+          <PopoverContent>
+            <LanguageSelector setLanguage={setListLanguage} language={language} /> 
+          </PopoverContent>
+        </Popover>
+       </div> 
       </div>
       
       {list.map((item, index) => {
@@ -151,6 +162,7 @@ function SiderPanelApp() {
           </div>
         )
       })}
+
     </div>
   )
 }

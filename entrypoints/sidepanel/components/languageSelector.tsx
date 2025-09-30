@@ -111,7 +111,7 @@ export default function LanguageSelector({ setLanguage, language }: Props) {
   }
 
   return (
-    <div className="flex justify-start gap-2">
+    <div className="">
       <div className="font-semibold mt-[8px]">Syntax Highlight Language</div>
       <div className="flex flex-col items-start gap-2">
         <div className='flex items-center gap-1'>
