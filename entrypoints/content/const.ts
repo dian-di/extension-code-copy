@@ -82,7 +82,7 @@ export const rules: Record<string, Rule> = {
   'opencv.org': {
     selectorList: [...selectorList, '.fragment'],
     codeParse,
-    langParse: (el: HTMLElement) => getLangFromClass(el.parentElement, /label-(\S+)/)
+    langParse: (el: HTMLElement) => getLangFromClass(el.parentElement, /label_(\S+)/)
   }
   // https://leetcode.com/problems/string-to-integer-atoi/solutions/6924378/video-o-n-time-and-o-1-space/
 }
