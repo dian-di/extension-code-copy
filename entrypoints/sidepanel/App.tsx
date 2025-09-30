@@ -4,7 +4,7 @@ import { toast, ToastType } from "@/lib/toast"
 import type { SourceCode } from '@/lib/types'
 import SyntaxHighlighter from 'react-syntax-highlighter'
 import { a11yDark } from 'react-syntax-highlighter/dist/esm/styles/hljs'
-import { ChevronUp, Copy, SquareDashedMousePointer } from "lucide-react"
+import { ChevronUp, Copy, SquareDashedMousePointer, RefreshCcw } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils";
@@ -36,8 +36,12 @@ function SiderPanelApp() {
   const [language, setLanguage] = useState<string>('')
 
   useEffect(() => {
-    getCodeList(setList)
+    toSetList()
   }, [])
+
+  function toSetList() {
+    getCodeList(setList)
+  }
 
   const handleCopy = (index: number) => {
         navigator.clipboard.writeText(list[index].code).then(() => {
@@ -106,12 +110,13 @@ function SiderPanelApp() {
       <div className="flex justify-between gap-2 py-4 px-2 sticky top-0 z-50 bg-white">
         <div className="flex items-center gap-2">
           <Checkbox checked={isAllChecked} onCheckedChange={toggleAllCheck} />
-          <Button 
+          <Button
             className="text-base font-semibold cursor-pointer"
             onClick={copySelected}>
               Copy Selected Code
           </Button>
         </div>
+        <RefreshCcw onClick={toSetList}/>
         <LanguageSelector setLanguage={setListLanguage} language={language} />
       </div>
       

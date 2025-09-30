@@ -1,5 +1,5 @@
 import { getEle, $$, uuid, scrollAndBlink } from "@/lib";
-import { handlerParams, initEventHandler  } from "@/lib/extension-action";
+import { handlerParams, initEventHandler } from "@/lib/extension-action";
 import { waitForElement } from "@/lib/wait-for-selector";
 import type { SourceCode } from '@/lib/types'
 import './content.css'
@@ -11,21 +11,6 @@ export default defineContentScript({
     const pathName = getPathName()
     const rule = rules[pathName] || rules.default
     const selector = rule.selectorList.join(',')
-    const codeDom = await waitForElement<HTMLDivElement>(selector)
-    if (!codeDom) return
-    // 等待cm editor初始化，否则无法正常获取元素和code数据
-    if (pathName === 'mozilla.org') {
-      await delay(1000)
-    }
-    const codeEleList = $$(selector).filter(item => !isElementHidden(item))
-    let marked = false
-    const codeList: SourceCode[] = codeEleList.map((item) => {
-      return {
-        id: '0',
-        code: rule.codeParse(item) || '',
-        language: rule.langParse(item) || '',
-      }
-    })
 
     const contentReq = {
       'get-code-list': getCodeList,
@@ -34,14 +19,19 @@ export default defineContentScript({
 
     function getCodeList(params: handlerParams) {
       const { sendResponse } = params
-      if (!marked) {
-        codeEleList.forEach((item, index) => {
-          const id = uuid()
-          item.setAttribute('cc-id', id)
-          codeList[index].id = id
-        })
-        marked = true
-      }
+      const codeEleList = $$(selector).filter(item => !isElementHidden(item))
+      const codeList: SourceCode[] = codeEleList.map((item) => {
+        return {
+          id: '0',
+          code: rule.codeParse(item) || '',
+          language: rule.langParse(item) || '',
+        }
+      })
+      codeEleList.forEach((item, index) => {
+        const id = uuid()
+        item.setAttribute('cc-id', id)
+        codeList[index].id = id
+      })
       sendResponse(codeList)
     }
 
@@ -52,10 +42,6 @@ export default defineContentScript({
       const attr = `[cc-id="${id}"]`
       const target = getEle(attr) as HTMLElement
       if (!target) return
-      // let finalTarget = target.closest('pre') as HTMLElement
-      // if (finalTarget.classList.contains('enlighter-origin')) {
-      //   finalTarget = finalTarget.previousElementSibling as HTMLElement
-      // }
       scrollAndBlink(target)
     }
 
@@ -72,5 +58,5 @@ const delay = (ms: number): Promise<void> => {
 }
 
 function isElementHidden(el: HTMLElement) {
-  return !el .offsetWidth && !el.offsetHeight;
+  return !el.offsetWidth && !el.offsetHeight;
 }
