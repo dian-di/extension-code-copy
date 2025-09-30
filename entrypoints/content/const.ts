@@ -15,6 +15,16 @@ export const rules: Record<string, Rule> = {
     codeParse,
     langParse,
   },
+  // https://chat.deepseek.com/a/chat/s/ddde3cd0-2677-4e06-99a3-2853dcc87a30
+  'deepseek.com': {
+    selectorList: ['pre'],
+    codeParse,
+    langParse: (el: HTMLElement) => {
+      const pre = el.previousElementSibling
+      if (!pre) return
+      return pre?.querySelector('div span')?.textContent
+    }
+  },
   // mdn-code-example
   // https://developer.mozilla.org/en-US/docs/Web/API/Element/shadowRoot
   // interactive-example
@@ -82,7 +92,7 @@ export const rules: Record<string, Rule> = {
   'opencv.org': {
     selectorList: [...selectorList, '.fragment'],
     codeParse,
-    langParse: (el: HTMLElement) => getLangFromClass(el.parentElement, /label-(\S+)/)
+    langParse: (el: HTMLElement) => getLangFromClass(el.parentElement, /label_(\S+)/)
   }
   // https://leetcode.com/problems/string-to-integer-atoi/solutions/6924378/video-o-n-time-and-o-1-space/
 }
