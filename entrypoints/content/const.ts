@@ -60,6 +60,7 @@ export const rules: Record<string, Rule> = {
       return getLangFromClass(el.parentElement, /highlight-source-(\S+)/)
     }
   },
+  // https://www.runoob.com/opencv/opencv-first-example.html
   'runoob.com': {
     selectorList: [...selectorList, '.example_code'],
     codeParse,
@@ -77,6 +78,7 @@ export const rules: Record<string, Rule> = {
     codeParse,
     langParse: (el: HTMLElement) => el.querySelector('span')?.className.replace('color', '')
   },
+  // https://docs.opencv.org/4.12.0/d9/db0/tutorial_hough_lines.html
   'opencv.org': {
     selectorList: [...selectorList, '.fragment'],
     codeParse,
