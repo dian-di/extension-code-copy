@@ -2,7 +2,7 @@ import SyntaxHighlighter from 'react-syntax-highlighter';
 
 SyntaxHighlighter.supportedLanguages
 import * as React from "react"
-import { Check, ChevronsUpDown } from "lucide-react"
+import { Check, ChevronsUpDown, Info, X } from "lucide-react"
 import { useLocalStorage } from "react-use"
 
 import { cn } from "@/lib/utils"
@@ -19,6 +19,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 type Item = {
   label: string,
@@ -112,60 +113,79 @@ export default function LanguageSelector({ setLanguage, language }: Props) {
 
   return (
     <div className="">
-      <div className="font-semibold mt-[8px]">Syntax Highlight Language</div>
-      <div className="flex flex-col items-start gap-2">
-        <div className='flex items-center gap-1'>
-          <Popover open={open} onOpenChange={setOpen}>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                role="combobox"
-                aria-expanded={open}
-                className="w-[150px] justify-between"
-                size={'sm'}
-              >
-                {language
-                  ? langList.find((item) => item.value === language)?.label
-                  : "Select language..."}
-                <ChevronsUpDown className="opacity-50" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-[200px] p-0">
-              <Command>
-                <CommandInput placeholder="Search language..." className="h-9" />
-                <CommandList>
-                  <CommandGroup>
-                    {langList.map((item) => (
-                      <CommandItem
-                        key={item.value}
-                        value={item.value}
-                        onSelect={(currentValue) => {
-                          if (currentValue && currentValue !== language) {
-                            setLanguage(currentValue)
-                            addToHistory(currentValue)
-                          }
-                          setOpen(false)
-                        }}
-                      >
-                        {item.label}
-                        <Check
-                          className={cn(
-                            "ml-auto",
-                            language === item.value ? "opacity-100" : "opacity-0"
-                          )}
-                        />
-                      </CommandItem>
-                    ))}
-                  </CommandGroup>
-                </CommandList>
-              </Command>
-            </PopoverContent>
-          </Popover>
-          <Button className='text-red-500' onClick={() => setLanguage('')} variant="link">Clear</Button>
+      <div className="flex flex-col items-start gap-3">
+        <div className='flex justify-between items-center w-full'>
+          <div className='flex items-start gap-1'>
+            <Popover open={open} onOpenChange={setOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  role="combobox"
+                  aria-expanded={open}
+                  className="w-[150px] justify-between"
+                  size={'sm'}
+                >
+                  {language
+                    ? langList.find((item) => item.value === language)?.label
+                    : "Select language..."}
+                  <ChevronsUpDown className="opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-[200px] p-0">
+                <Command>
+                  <CommandInput placeholder="Search language..." className="h-9" />
+                  <CommandList>
+                    <CommandGroup>
+                      {langList.map((item) => (
+                        <CommandItem
+                          key={item.value}
+                          value={item.value}
+                          onSelect={(currentValue) => {
+                            if (currentValue && currentValue !== language) {
+                              setLanguage(currentValue)
+                              addToHistory(currentValue)
+                            }
+                            setOpen(false)
+                          }}
+                        >
+                          {item.label}
+                          <Check
+                            className={cn(
+                              "ml-auto",
+                              language === item.value ? "opacity-100" : "opacity-0"
+                            )}
+                          />
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Info size={14} className='cursor-pointer'/>
+              </TooltipTrigger>
+              <TooltipContent>
+                This is the language that <br />
+                will be used to highlight the code.
+              </TooltipContent>
+            </Tooltip>
+          </div>
+          <Button className='text-red-500' onClick={() => setLanguage('')} variant="link">Reset</Button>
         </div>
-        <div className='flex items-center gap-1 mt-2'>
+        <div className='flex flex-wrap items-center text-center gap-2'>
           {history?.map(item => (
-            <div onClick={() => setLanguage(item)} className="py-1 px-2 bg-gray-600 rounded-full cursor-pointer text-white">{langMap[item]}</div>
+            <div className='flex items-center gap-2 rounded-full cursor-pointer bg-secondary px-3 py-2'>
+              <div onClick={() => setLanguage(item)} className="rounded-full cursor-pointer ">
+                {langMap[item]}
+              </div>
+              <X className='w-2 h-2' onClick={(e) => {
+                e.stopPropagation()
+                const data = history?.filter(history_item => history_item != item)
+                setHistory(data)
+              }} />
+            </div>
           ))}
         </div>
       </div>
