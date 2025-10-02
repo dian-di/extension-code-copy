@@ -115,7 +115,7 @@ export default function LanguageSelector({ setLanguage, language }: Props) {
     <div className="">
       <div className="flex flex-col items-start gap-3">
         <div className='flex justify-between items-center w-full'>
-          <div className='flex items-start gap-1'>
+          <div className='flex items-center gap-1'>
             <Popover open={open} onOpenChange={setOpen}>
               <PopoverTrigger asChild>
                 <Button
