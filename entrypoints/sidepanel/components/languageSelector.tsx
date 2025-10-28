@@ -1,6 +1,3 @@
-import SyntaxHighlighter from 'react-syntax-highlighter';
-
-SyntaxHighlighter.supportedLanguages
 import * as React from "react"
 import { Check, ChevronsUpDown, Info, X } from "lucide-react"
 import { useLocalStorage } from "react-use"
@@ -49,8 +46,7 @@ const langList: Item[] = [
   { label: "Kotlin", value: "kotlin" },
   { label: "Assembly language", value: "x86asm" }, // x86asm
   { label: "Lisp", value: "lisp" },
-  // {label: "COBOL", name: // "cobol"},
-  // {label: "Classic Visual Basic", name: // "classic visual basic"},
+  {label: "COBOL", value: "cobol"},
   { label: "Prolog", value: "prolog" },
   { label: "Swift", value: "swift" },
   { label: "Ruby", value: "ruby" },
@@ -61,21 +57,16 @@ const langList: Item[] = [
   { label: "Lua", value: "lua" },
   { label: "Haskell", value: "haskell" },
   { label: "Scala", value: "scala" },
-  // {label: "(Visual) FoxPro", value: // "(visual) foxpro"},
   { label: "TypeScript", value: "typescript" },
   { label: "GAMS", value: "gams" },
   { label: "VBScript", value: "vbscript" },
-  // {label: "PL/SQL", value: "sql"},
   { label: "ABAP", value: "abap" },
-  // {label: "X++", value: // "x++"},
   { label: "Elixir", value: "elixir" },
   { label: "Solidity", value: "solidity" },
   { label: "ML", value: "ml" },
   { label: "Erlang", value: "erlang" },
   { label: "PowerShell", value: "powershell" },
-  // {label: "Ladder Logic", value: // "ladder logic"},
   { label: "Bash", value: "bash" },
-  // {label: "V", value: // "v"},
   { label: "Awk", value: "awk" },
   { label: "LabVIEW", value: "labview" },
   // extended

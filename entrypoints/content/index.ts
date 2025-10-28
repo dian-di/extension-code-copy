@@ -1,6 +1,5 @@
 import { getEle, $$, uuid, scrollAndBlink } from "@/lib";
 import { handlerParams, initEventHandler } from "@/lib/extension-action";
-import { waitForElement } from "@/lib/wait-for-selector";
 import type { SourceCode } from '@/lib/types'
 import './content.css'
 import { rules } from "./const";
@@ -20,17 +19,15 @@ export default defineContentScript({
     function getCodeList(params: handlerParams) {
       const { sendResponse } = params
       const codeEleList = $$(selector).filter(item => !isElementHidden(item))
-      const codeList: SourceCode[] = codeEleList.map((item) => {
-        return {
-          id: '0',
-          code: rule.codeParse(item) || '',
-          language: rule.langParse(item) || '',
-        }
-      })
-      codeEleList.forEach((item, index) => {
+      let codeList: SourceCode[] = []
+      codeEleList.forEach((item) => {
         const id = uuid()
         item.setAttribute('cc-id', id)
-        codeList[index].id = id
+        codeList.push({
+          id,
+          code: rule.codeParse(item)?.trim() || '',
+          language: rule.langParse(item) || '',
+        })
       })
       sendResponse(codeList)
     }
@@ -51,10 +48,6 @@ export default defineContentScript({
 
 function getPathName() {
   return location.hostname.split('.').slice(-2).join('.')
-}
-
-const delay = (ms: number): Promise<void> => {
-  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 function isElementHidden(el: HTMLElement) {

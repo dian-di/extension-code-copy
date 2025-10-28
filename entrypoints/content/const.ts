@@ -4,7 +4,7 @@ export type Rule = {
   codeParse: (el: HTMLElement) => string | undefined | null
 }
 
-const selectorList: string[] = ['pre']
+const selectorList: string[] = ['pre', '.cm-editor .cm-content']
 
 export const rules: Record<string, Rule> = {
   // https://blog.ml.cmu.edu/2025/06/01/rlhf-101-a-technical-tutorial-on-reinforcement-learning-from-human-feedback/
@@ -15,51 +15,19 @@ export const rules: Record<string, Rule> = {
     codeParse,
     langParse,
   },
+  'supabase.com': {
+    selectorList: ['pre>code>.flex-grow'],
+    codeParse,
+    langParse,
+  },
   // https://chat.deepseek.com/a/chat/s/ddde3cd0-2677-4e06-99a3-2853dcc87a30
   'deepseek.com': {
-    selectorList: ['pre'],
+    selectorList,
     codeParse,
     langParse: (el: HTMLElement) => {
       const pre = el.previousElementSibling
       if (!pre) return
       return pre?.querySelector('div span')?.textContent
-    }
-  },
-  // mdn-code-example
-  // https://developer.mozilla.org/en-US/docs/Web/API/Element/shadowRoot
-  // interactive-example
-  // https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/abbr
-  'mozilla.org': {
-    selectorList: [...selectorList, 'mdn-code-example', 'interactive-example'],
-    codeParse: (el: HTMLElement) => {
-      const tagName = el.tagName
-      let target
-      if (tagName === 'INTERACTIVE-EXAMPLE') {
-        // TODO: 两种情况
-        // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions
-        target = el.shadowRoot?.querySelector('mdn-play-editor')?.shadowRoot?.querySelector('.cm-content')
-        // // TODO: 元素里有多个tab，每个tab展示一段code
-        // // https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/abbr
-        // target = el.shadowRoot?.querySelector('mdn-play-editor')?.shadowRoot?.querySelector('.cm-content')
-      } else if (tagName === 'MDN-CODE-EXAMPLE') {
-        target = el.shadowRoot?.querySelector('pre')
-      } else {
-        target = el
-      }
-      return (target as HTMLElement)?.innerText
-    },
-    langParse: (el: HTMLElement) => {
-      const tagName = el.tagName
-      let target
-      if (tagName === 'INTERACTIVE-EXAMPLE') {
-        target = el.shadowRoot?.querySelector('mdn-play-editor')?.shadowRoot?.querySelector('.cm-content')
-        return target?.getAttribute('data-language')
-      } else if (tagName === 'MDN-CODE-EXAMPLE') {
-        target = el.shadowRoot?.querySelector('pre') as HTMLElement
-        return getLangFromClass(target, /brush:\s+(\S+)/)
-      } else {
-        return getLangFromClass(el, /brush:\s+(\S+)/)
-      }
     }
   },
   // https://github.com/MrBr/antd-zod
@@ -93,8 +61,41 @@ export const rules: Record<string, Rule> = {
     selectorList: [...selectorList, '.fragment'],
     codeParse,
     langParse: (el: HTMLElement) => getLangFromClass(el.parentElement, /label_(\S+)/)
-  }
-  // https://leetcode.com/problems/string-to-integer-atoi/solutions/6924378/video-o-n-time-and-o-1-space/
+  },
+  // mdn-code-example
+  // https://developer.mozilla.org/en-US/docs/Web/API/Element/shadowRoot
+  // interactive-example
+  // https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/abbr
+  'mozilla.org': {
+    selectorList: [...selectorList, 'mdn-code-example', 'interactive-example'],
+    codeParse: (el: HTMLElement) => {
+      const tagName = el.tagName
+      let target
+      if (tagName === 'INTERACTIVE-EXAMPLE') {
+        // TODO: 两种情况
+        // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions
+        target = el.shadowRoot?.querySelector('mdn-play-editor')?.shadowRoot?.querySelector('.cm-content')
+      } else if (tagName === 'MDN-CODE-EXAMPLE') {
+        target = el.shadowRoot?.querySelector('pre')
+      } else {
+        target = el
+      }
+      return (target as HTMLElement)?.innerText
+    },
+    langParse: (el: HTMLElement) => {
+      const tagName = el.tagName
+      let target
+      if (tagName === 'INTERACTIVE-EXAMPLE') {
+        target = el.shadowRoot?.querySelector('mdn-play-editor')?.shadowRoot?.querySelector('.cm-content')
+        return target?.getAttribute('data-language')
+      } else if (tagName === 'MDN-CODE-EXAMPLE') {
+        target = el.shadowRoot?.querySelector('pre') as HTMLElement
+        return getLangFromClass(target, /brush:\s+(\S+)/)
+      } else {
+        return getLangFromClass(el, /brush:\s+(\S+)/)
+      }
+    }
+  },
 }
 
 function getLangFromClass(el: HTMLElement | null, regex: RegExp) {
