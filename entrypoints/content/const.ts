@@ -108,9 +108,9 @@ function getLangFromClass(el: HTMLElement | null, regex: RegExp) {
 
 function codeParse(el: HTMLElement) {
   const tagName = el.tagName
-  let target
   if (tagName === 'PRE') {
-    return el.querySelector('code')?.innerText
+    const codeEle = el.querySelector('code')
+    return (codeEle || el).innerText
   }
   return el.innerText
 }
