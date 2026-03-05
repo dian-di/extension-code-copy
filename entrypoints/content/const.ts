@@ -20,6 +20,16 @@ export const rules: Record<string, Rule> = {
     codeParse,
     langParse,
   },
+  // https://blog.jetbrains.com/pycharm/2026/02/langchain-tutorial-2026/
+  'jetbrains.com': {
+    selectorList: ['.enlighter-default'],
+    codeParse: (el: HTMLElement) => {
+      return el.nextElementSibling?.textContent
+    },
+    langParse: (el: HTMLElement) => {
+      return langParse(el.nextElementSibling as HTMLElement)
+    },
+  },
   // https://chat.deepseek.com/a/chat/s/ddde3cd0-2677-4e06-99a3-2853dcc87a30
   'deepseek.com': {
     selectorList,
