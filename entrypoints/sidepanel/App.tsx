@@ -4,7 +4,7 @@ import { toast, ToastType } from "@/lib/toast"
 import type { SourceCode } from '@/lib/types'
 import SyntaxHighlighter from 'react-syntax-highlighter'
 import { a11yDark } from 'react-syntax-highlighter/dist/esm/styles/hljs'
-import { ChevronUp, Copy, SquareDashedMousePointer, RefreshCcw, Settings } from "lucide-react"
+import { Copy, SquareDashedMousePointer, RefreshCcw, Settings } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils";
@@ -154,7 +154,6 @@ function SiderPanelApp() {
                     onClick={() => scrollToTarget(item.id)}/>
                   <Copy size={20} className="hover:text-black cursor-pointer"
                     onClick={() => handleCopy(index)} />
-                  <ChevronUp size={20} onClick={() => toggleExpand(item.id)} className={cn('transition-transform', item.isExpanded ? '': 'rotate-180', 'hover:text-black  cursor-pointer')} />
                 </div>
               </div>
 

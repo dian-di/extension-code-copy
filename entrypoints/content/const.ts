@@ -15,6 +15,15 @@ export const rules: Record<string, Rule> = {
     codeParse,
     langParse,
   },
+  'openai.com': {
+    selectorList,
+    codeParse: (el: HTMLElement) => {
+      const c = el.cloneNode(true) as HTMLElement
+      c.querySelector('code>code')?.remove()
+      return codeParse(c)
+    },
+    langParse
+  },
   'supabase.com': {
     selectorList: ['pre>code>.flex-grow'],
     codeParse,
@@ -126,7 +135,7 @@ function codeParse(el: HTMLElement) {
 }
 
 function langParse(el: HTMLElement): string | null {
-  let lang = el.getAttribute('lang') || el.getAttribute('language') || el.getAttribute('data-lang') || el.getAttribute('data-language') || el.getAttribute('data-enlighter-language')
+  let lang = el.getAttribute('lang') || el.getAttribute('language') || el.getAttribute('data-lang') || el.getAttribute('data-language') || el.getAttribute('data-enlighter-language') || el.getAttribute('syntax')
   if (!lang) {
     const match = el.className.match(/lang(?:[^-]+)?-(\S+)/)
     if (match) {

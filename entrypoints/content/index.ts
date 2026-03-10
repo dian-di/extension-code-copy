@@ -26,7 +26,7 @@ export default defineContentScript({
         codeList.push({
           id,
           code: rule.codeParse(item)?.trim() || '',
-          language: rule.langParse(item) || '',
+          language: rule.langParse(item)?.toLowerCase() || '',
         })
       })
       sendResponse(codeList)
