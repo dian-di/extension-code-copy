@@ -17,6 +17,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import analytics from "@/lib/analytics"
+import { getActiveTabUrl } from "@/lib/extension-action"
 
 type Item = {
   label: string,
@@ -131,10 +133,15 @@ export default function LanguageSelector({ setLanguage, language }: Props) {
                         <CommandItem
                           key={item.value}
                           value={item.value}
-                          onSelect={(currentValue) => {
+                          onSelect={async (currentValue) => {
                             if (currentValue && currentValue !== language) {
                               setLanguage(currentValue)
                               addToHistory(currentValue)
+                              // 追踪语言选择
+                              const pageUrl = await getActiveTabUrl()
+                              await analytics.trackClick('language_selected', pageUrl, {
+                                language: currentValue,
+                              })
                             }
                             setOpen(false)
                           }}
@@ -163,12 +170,33 @@ export default function LanguageSelector({ setLanguage, language }: Props) {
               </TooltipContent>
             </Tooltip>
           </div>
-          <Button className='text-red-500' onClick={() => setLanguage('')} variant="link">Reset</Button>
+          <Button 
+            className='text-red-500' 
+            onClick={async () => {
+              setLanguage('')
+              // 追踪重置语言
+              const pageUrl = await getActiveTabUrl()
+              await analytics.trackClick('language_reset', pageUrl)
+            }} 
+            variant="link"
+          >
+            Reset
+          </Button>
         </div>
         <div className='flex flex-wrap items-center text-center gap-2'>
           {history?.map(item => (
             <div className='flex items-center gap-2 rounded-full cursor-pointer bg-secondary px-3 py-2'>
-              <div onClick={() => setLanguage(item)} className="rounded-full cursor-pointer ">
+              <div 
+                onClick={async () => {
+                  setLanguage(item)
+                  // 追踪从历史记录选择语言
+                  const pageUrl = await getActiveTabUrl()
+                  await analytics.trackClick('language_selected_from_history', pageUrl, {
+                    language: item,
+                  })
+                }} 
+                className="rounded-full cursor-pointer "
+              >
                 {langMap[item]}
               </div>
               <X className='w-2 h-2' onClick={(e) => {

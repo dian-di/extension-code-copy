@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react"
-import { sendMessageToActiveTab } from "@/lib/extension-action"
+import { sendMessageToActiveTab, getActiveTabUrl } from "@/lib/extension-action"
 import { toast, ToastType } from "@/lib/toast"
 import type { SourceCode } from '@/lib/types'
 import SyntaxHighlighter from 'react-syntax-highlighter'
@@ -12,6 +12,7 @@ import LanguageSelector from './components/languageSelector';
 import { langMap } from './components/languageSelector'
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { TooltipProvider } from "@/components/ui/tooltip"
+import analytics from "@/lib/analytics"
 
 type ExtendedSourceCode = SourceCode & {
   isExpanded: boolean
@@ -39,27 +40,41 @@ function SiderPanelApp() {
 
   useEffect(() => {
     toSetList()
+    // 追踪侧边栏打开
+    getActiveTabUrl().then((url) => {
+      analytics.trackClick('sidepanel_opened', url)
+    })
   }, [])
 
-  function toSetList() {
+  const toSetList = async () => {
     getCodeList(setList)
+    // 追踪刷新操作
+    const pageUrl = await getActiveTabUrl()
+    await analytics.trackClick('refresh_list', pageUrl)
   }
 
-  const handleCopy = (index: number) => {
-        navigator.clipboard.writeText(list[index].code).then(() => {
-          toast({
-            text: 'Copied Successful. ✨',
-          })
-        })
+  const handleCopy = async (index: number) => {
+    const code = list[index].code
+    navigator.clipboard.writeText(code).then(async () => {
+      toast({
+        text: 'Copied Successful. ✨',
+      })
+      // 追踪单个复制操作
+      const pageUrl = await getActiveTabUrl()
+      await analytics.trackCopy('single', pageUrl, code.length)
+    })
   }
 
-  const scrollToTarget = (id: string) => {
+  const scrollToTarget = async (id: string) => {
     sendMessageToActiveTab({
       greeting: 'scroll-to-element',
       data: {
         id
       }
     })
+    // 追踪滚动到元素操作
+    const pageUrl = await getActiveTabUrl()
+    await analytics.trackScrollToElement(pageUrl, id)
   }
 
   const copySelected = async () => {
@@ -69,37 +84,67 @@ function SiderPanelApp() {
         text: 'You have to select at least one item.',
         type: ToastType.Warning
       })
+      // 追踪尝试复制但未选择任何项
+      const pageUrl = await getActiveTabUrl()
+      await analytics.trackClick('copy_selected_no_selection', pageUrl)
       return
     }
-    navigator.clipboard.writeText(checkedList.map(item => item.code).join(`\n\n`)).then(() => {
+    const combinedCode = checkedList.map(item => item.code).join(`\n\n`)
+    navigator.clipboard.writeText(combinedCode).then(async () => {
       toast({
         text: 'Copied Successful. ✨',
       })
+      // 追踪批量复制操作
+      const pageUrl = await getActiveTabUrl()
+      await analytics.trackCopy('multiple', pageUrl, combinedCode.length)
     })
   }
 
-  const toggleExpand = (id: string) => {
+  const toggleExpand = async (id: string) => {
+    const item = list.find(i => i.id === id)
+    const newExpandedState = !item?.isExpanded
     setList(prevList => 
       prevList.map(item => 
-        item.id === id ? {...item, isExpanded: !item.isExpanded} : item
+        item.id === id ? {...item, isExpanded: newExpandedState} : item
       )
     )
+    // 追踪展开/收起操作
+    const pageUrl = await getActiveTabUrl()
+    await analytics.trackClick('toggle_expand', pageUrl, {
+      element_id: id,
+      expanded: newExpandedState,
+    })
   }
 
-  const toggleCheck = (id: string) => {
+  const toggleCheck = async (id: string) => {
+    const item = list.find(i => i.id === id)
+    const newCheckedState = !item?.isChecked
     setList(prevList => 
       prevList.map(item => 
-        item.id === id ? {...item, isChecked: !item.isChecked} : item
+        item.id === id ? {...item, isChecked: newCheckedState} : item
       )
     )
+    // 追踪复选框点击
+    const pageUrl = await getActiveTabUrl()
+    await analytics.trackClick('toggle_check', pageUrl, {
+      element_id: id,
+      checked: newCheckedState,
+    })
   }
 
   const isAllChecked = useMemo(() => {
     return list.length !== 0 && list.every(item => item.isChecked)
   }, [list])
 
-  const toggleAllCheck = () => {
-    setList(prevList => prevList.map(item => ({...item, isChecked: !isAllChecked})))
+  const toggleAllCheck = async () => {
+    const newCheckedState = !isAllChecked
+    setList(prevList => prevList.map(item => ({...item, isChecked: newCheckedState})))
+    // 追踪全选/取消全选
+    const pageUrl = await getActiveTabUrl()
+    await analytics.trackClick('toggle_all_check', pageUrl, {
+      checked: newCheckedState,
+      total_items: list.length,
+    })
   }
 
   const setListLanguage = (language: string) => {
@@ -124,7 +169,15 @@ function SiderPanelApp() {
         
           <Popover>
             <PopoverTrigger asChild>
-              <Settings size={24} className="cursor-pointer" />
+              <Settings 
+                size={24} 
+                className="cursor-pointer" 
+                onClick={async () => {
+                  // 追踪设置按钮点击
+                  const pageUrl = await getActiveTabUrl()
+                  await analytics.trackClick('settings_opened', pageUrl)
+                }}
+              />
             </PopoverTrigger>
             <PopoverContent>
               <LanguageSelector setLanguage={setListLanguage} language={language} /> 

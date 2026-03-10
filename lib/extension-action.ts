@@ -44,3 +44,16 @@ export function sendMessageToActiveTab(msg: BrowserRequest) {
 export function sendBrowserMessage(request: BrowserRequest) {
   return browser.runtime.sendMessage(request)
 }
+
+// 获取当前活动标签页的 URL
+export async function getActiveTabUrl(): Promise<string | undefined> {
+  try {
+    const tabs = await browser.tabs.query({ active: true, currentWindow: true })
+    if (tabs.length > 0 && tabs[0].url) {
+      return tabs[0].url
+    }
+  } catch (error) {
+    console.error('Failed to get active tab URL:', error)
+  }
+  return undefined
+}
